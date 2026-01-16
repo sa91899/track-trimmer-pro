@@ -1,0 +1,25 @@
+APP STORE SUBMISSION ASSETS
+================================
+
+App Name:
+Track Trimmer Pro
+
+Short Description (80 characters):
+Effortlessly remove silence from your audio and podcasts in seconds.
+
+Long Description:
+Track Trimmer Pro is a professional desktop application designed for efficient batch audio processing. Whether you're editing podcasts, music tracks, or audio recordings, this powerful tool allows you to trim unwanted sections, apply fade effects, and convert audio formats with ease. Process entire folders of audio files simultaneously, saving hours of manual editing time.
+
+The application features an intuitive interface that supports both single file and batch folder processing modes. With advanced options including customizable fade in/out durations, volume normalization, and format conversion, Track Trimmer Pro gives you complete control over your audio editing workflow. All processing happens locally on your device, ensuring your files remain private and secure.
+
+Built with performance in mind, Track Trimmer Pro leverages FFmpeg for reliable, high-quality audio processing. Support for multiple formats including MP3, WAV, FLAC, M4A, AAC, and OGG makes it versatile for any audio project. Real-time progress tracking and detailed error reporting help you monitor batch operations, while the modern dark/light theme interface provides a comfortable editing experience.
+
+Support Email:
+[Your Email Here]
+
+Category:
+Utilities / Audio
+
+Keywords (for search optimization):
+audio, trim, edit, batch, process, podcast, silence, fade, convert, mp3, wav, flac, ffmpeg, audio editor, audio processing, trim audio, remove silence, batch audio, audio converter
+

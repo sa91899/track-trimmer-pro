@@ -1,0 +1,104 @@
+{
+  "name": "track-trimmer-pro",
+  "version": "1.0.0",
+  "description": "Track Trimmer Pro - Professional batch audio trimming and conversion tool",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder"
+  },
+  "keywords": [
+    "track",
+    "trimmer",
+    "audio",
+    "processor",
+    "trim",
+    "fade"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "ffmpeg-static": "^5.2.0",
+    "ffprobe-static": "^3.1.0",
+    "fluent-ffmpeg": "^2.1.2"
+  },
+  "build": {
+    "appId": "com.tracktrimmerpro.app",
+    "productName": "Track Trimmer Pro",
+    "copyright": "Copyright © 2026",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "msix",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "publisherName": "Steven Adams",
+      "verifyUpdateCodeSignature": false
+    },
+    "msix": {
+      "identityName": "TrackTrimmerPro.App",
+      "publisher": "CN=Steven Adams, O=Your Company, L=City, S=State, C=US",
+      "publisherDisplayName": "Steven Adams",
+      "applicationId": "TrackTrimmerPro",
+      "displayName": "Track Trimmer Pro",
+      "description": "Professional batch audio trimming and conversion tool",
+      "backgroundColor": "#000000",
+      "startMenu": {
+        "name": "Track Trimmer Pro"
+      },
+      "capabilities": {
+        "rescap": ["runFullTrust"]
+      }
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.utilities",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/ffmpeg-static/bin/**/*",
+      "node_modules/ffmpeg-static/bin/win32/x64/ffmpeg.exe",
+      "node_modules/ffprobe-static/bin/**/*"
+    ],
+    "extraFiles": [
+      {
+        "from": "node_modules/ffmpeg-static/bin/win32/x64/ffmpeg.exe",
+        "to": "ffmpeg.exe",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "node_modules/ffprobe-static/bin/win32/x64/ffprobe.exe",
+        "to": "ffprobe.exe",
+        "filter": ["**/*"]
+      }
+    ]
+  }
+}
