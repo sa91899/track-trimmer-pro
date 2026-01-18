@@ -76,6 +76,7 @@
       "type": "distribution",
       "hardenedRuntime": true,
       "category": "public.app-category.music",
+      "identity": "Apple Distribution: Steve Adams (K86UCD782J)",
       "extendInfo": {
         "ElectronTeamID": "K86UCD782J"
       },
@@ -101,6 +102,7 @@
       ]
     },
     "mas": {
+      "identity": "3rd Party Mac Developer Installer: Steve Adams (K86UCD782J)",
       "entitlements": "build/entitlements.mas.plist",
       "entitlementsInherit": "build/entitlements.mas.inherit.plist"
     }

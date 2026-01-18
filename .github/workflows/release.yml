@@ -36,9 +36,10 @@ jobs:
         env:
           APPLE_TEAM_ID: K86UCD782J
           USE_HARD_LINKS: false
-          # GitHub takes your secrets and turns them back into real files here
-          CSC_LINK: ${{ secrets.P12_BASE64 }}
-          CSC_KEY_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          CSC_INSTALLER_LINK: ${{ secrets.CSC_INSTALLER_LINK }}
+          CSC_INSTALLER_KEY_PASSWORD: ${{ secrets.CSC_INSTALLER_KEY_PASSWORD }}
           PROVISIONING_PROFILE: ${{ secrets.PROVISION_PROFILE_BASE64 }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
