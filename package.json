@@ -1,6 +1,6 @@
 {
   "name": "track-trimmer-pro",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "Track Trimmer Pro - Professional batch audio trimming and conversion tool",
   "main": "main.js",
   "scripts": {
@@ -103,9 +103,12 @@
       ]
     },
     "mas": {
-      "identity": "Steve Adams (K86UCD782J)",
+      "identity": "3rd Party Mac Developer Application: Steve Adams (K86UCD782J)",
       "entitlements": "build/entitlements.mas.plist",
-      "entitlementsInherit": "build/entitlements.mas.inherit.plist"
+      "entitlementsInherit": "build/entitlements.mas.inherit.plist",
+      "provisioningProfile": "build/embedded.provisionprofile",
+      "category": "public.app-category.music",
+      "type": "distribution"
     }
   }
 }
