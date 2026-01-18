@@ -102,7 +102,7 @@
       ]
     },
     "mas": {
-      "identity": "3rd Party Mac Developer Installer: Steve Adams (K86UCD782J)",
+      "identity": "Steve Adams (K86UCD782J)",
       "entitlements": "build/entitlements.mas.plist",
       "entitlementsInherit": "build/entitlements.mas.inherit.plist"
     }
