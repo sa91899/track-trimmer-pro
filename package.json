@@ -66,19 +66,11 @@
       "languages": ["en-US"]
     },
     "mac": {
-      "target": [
-        {
-          "target": "mas",
-          "arch": ["x64", "arm64"]
-        }
-      ],
-      "icon": "assets/icon.icns",
+      "target": "mas",
       "category": "public.app-category.productivity",
-      "entitlements": "build/entitlements.mac.plist",
-      "entitlementsInherit": "build/entitlements.mac.plist",
-      "osxUniversal": {
-        "x64ArchFiles": "**/ffmpeg-x64"
-      },
+      "x64ArchFiles": "**/ffmpeg-x64",
+      "entitlements": "build/entitlements.mas.plist",
+      "entitlementsInherit": "build/entitlements.mas.inherit.plist",
       "extraResources": [
         {
           "from": "bin/mac/ffmpeg-x64",
