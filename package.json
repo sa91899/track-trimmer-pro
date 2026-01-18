@@ -69,10 +69,7 @@
     "mac": {
       "target": "mas",
       "category": "public.app-category.productivity",
-      "x64ArchFiles": [
-        "**/ffmpeg-x64",
-        "**/ffprobe-x64"
-      ],
+      "x64ArchFiles": "**/f{fmpeg,fprobe}-x64",
       "entitlements": "build/entitlements.mas.plist",
       "entitlementsInherit": "build/entitlements.mas.inherit.plist",
       "extraResources": [
