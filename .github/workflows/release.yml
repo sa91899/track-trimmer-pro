@@ -18,7 +18,11 @@ jobs:
           node-version: 20
 
       - name: Install Dependencies
-        run: npm install
+        run: |
+          npm install
+          # Force download both versions of ffmpeg for the universal build
+          npx ffmpeg-static-install --arch=x64
+          npx ffmpeg-static-install --arch=arm64
 
       - name: Build and Sign (MAS)
         run: npm run dist:mas

@@ -38,7 +38,8 @@
     },
     "asarUnpack": [
       "node_modules/ffmpeg-static/**/*",
-      "node_modules/ffprobe-static/**/*"
+      "node_modules/ffprobe-static/**/*",
+      "**/ffmpeg"
     ],
     "extraResources": [
       {
@@ -74,6 +75,7 @@
       "category": "public.app-category.productivity",
       "entitlements": "build/entitlements.mac.plist",
       "entitlementsInherit": "build/entitlements.mac.plist",
+      "x64ArchFiles": "**/ffmpeg",
       "extraResources": [
         {
           "from": "node_modules/ffmpeg-static/ffmpeg",
