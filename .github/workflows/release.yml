@@ -34,8 +34,9 @@ jobs:
           chmod +x bin/mac/ffmpeg-x64 bin/mac/ffmpeg-arm64
 
       - name: Build and Sign (MAS)
-        run: npm run dist:mas -- -c.publish=never
+        run: npm run dist:mas
         env:
+          ELECTRON_BUILDER_ALLOW_EMPTY_ARCHIVE: true
           APPLE_TEAM_ID: K86UCD782J
           USE_HARD_LINKS: false
           CSC_LINK: ${{ secrets.CSC_LINK }}
