@@ -34,7 +34,7 @@ jobs:
           chmod +x bin/mac/ffmpeg-x64 bin/mac/ffmpeg-arm64
 
       - name: Build and Sign (MAS)
-        run: npm run dist:mas
+        run: npm run dist:mas -- -c.publish=never
         env:
           APPLE_TEAM_ID: K86UCD782J
           USE_HARD_LINKS: false
@@ -49,4 +49,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Track-Trimmer-Pro-Package
-          path: dist/*.pkg
+          path: dist/**/*.pkg
+          if-no-files-found: error
