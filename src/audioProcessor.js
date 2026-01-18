@@ -42,39 +42,36 @@ function getFFmpegPath() {
 }
 
 function getFFprobePath() {
+  // Check if we're in a packaged app (process.resourcesPath only exists in packaged Electron apps)
+  const isDev = !process.resourcesPath;
+  
+  // In development, use the standard ffprobe-static path
+  if (isDev) {
+    return ffprobeStatic.path;
+  }
+  
+  // For packaged Mac apps, use architecture-specific binaries
+  if (process.platform === 'darwin' && process.resourcesPath) {
+    const arch = process.arch === 'arm64' ? 'arm64' : 'x64';
+    const ffprobePath = path.join(process.resourcesPath, `ffprobe-${arch}`);
+    try {
+      const fsSync = require('fs');
+      if (fsSync.existsSync(ffprobePath)) {
+        // Make sure it's executable
+        fsSync.chmodSync(ffprobePath, '755');
+        return ffprobePath;
+      }
+    } catch (e) {
+      console.log('Could not use architecture-specific ffprobe, trying fallback:', e.message);
+    }
+  }
+  
+  // Fallback to default path from ffprobe-static
   let ffprobePath = ffprobeStatic.path;
   
   // If path is inside app.asar, replace with app.asar.unpacked for packaged apps
   if (ffprobePath && ffprobePath.includes('app.asar')) {
     ffprobePath = ffprobePath.replace('app.asar', 'app.asar.unpacked');
-  }
-  
-  // For packaged Mac apps, check if binary is in resources folder
-  if (process.platform === 'darwin' && process.resourcesPath) {
-    // Try architecture-specific binary first, then fall back to generic
-    const arch = process.arch === 'arm64' ? 'arm64' : 'x64';
-    const resourcesPath = arch === 'arm64' 
-      ? path.join(process.resourcesPath, 'ffprobe-arm64')
-      : path.join(process.resourcesPath, 'ffprobe');
-    
-    try {
-      const fsSync = require('fs');
-      if (fsSync.existsSync(resourcesPath)) {
-        // Make sure it's executable
-        fsSync.chmodSync(resourcesPath, '755');
-        ffprobePath = resourcesPath;
-      } else {
-        // Fall back to generic ffprobe
-        const genericPath = path.join(process.resourcesPath, 'ffprobe');
-        if (fsSync.existsSync(genericPath)) {
-          fsSync.chmodSync(genericPath, '755');
-          ffprobePath = genericPath;
-        }
-      }
-    } catch (e) {
-      // Fall back to default path from ffprobe-static
-      console.log('Could not use resources path, using default:', e.message);
-    }
   }
   
   return ffprobePath;

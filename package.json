@@ -40,7 +40,8 @@
     "asarUnpack": [
       "node_modules/ffmpeg-static/**/*",
       "node_modules/ffprobe-static/**/*",
-      "**/ffmpeg-*"
+      "**/ffmpeg-*",
+      "**/ffprobe-*"
     ],
     "extraResources": [
       {
@@ -68,7 +69,10 @@
     "mac": {
       "target": "mas",
       "category": "public.app-category.productivity",
-      "x64ArchFiles": "**/ffmpeg-x64",
+      "x64ArchFiles": [
+        "**/ffmpeg-x64",
+        "**/ffprobe-x64"
+      ],
       "entitlements": "build/entitlements.mas.plist",
       "entitlementsInherit": "build/entitlements.mas.inherit.plist",
       "extraResources": [
@@ -81,11 +85,11 @@
           "to": "ffmpeg-arm64"
         },
         {
-          "from": "node_modules/ffprobe-static/bin/darwin/x64/ffprobe",
-          "to": "ffprobe"
+          "from": "bin/mac/ffprobe-x64",
+          "to": "ffprobe-x64"
         },
         {
-          "from": "node_modules/ffprobe-static/bin/darwin/arm64/ffprobe",
+          "from": "bin/mac/ffprobe-arm64",
           "to": "ffprobe-arm64"
         }
       ]

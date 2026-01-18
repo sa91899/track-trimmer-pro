@@ -22,16 +22,21 @@ jobs:
           npm install
           # Create a folder to hold our universal-ready binaries
           mkdir -p bin/mac
-          # Download Intel (x64) version
+          # Download FFmpeg Intel (x64) version
           curl -L https://github.com/eugeneware/ffmpeg-static/releases/download/b5.1.2/darwin-x64 -o bin/mac/ffmpeg-x64
-          # Download Apple Silicon (arm64) version
+          # Download FFmpeg Apple Silicon (arm64) version
           curl -L https://github.com/eugeneware/ffmpeg-static/releases/download/b5.1.2/darwin-arm64 -o bin/mac/ffmpeg-arm64
+          # Download FFprobe Intel (x64) version
+          curl -L https://github.com/descriptinc/ffmpeg-ffprobe-static/releases/download/b6.1.2-rc.1/ffprobe-darwin-x64 -o bin/mac/ffprobe-x64
+          # Download FFprobe Apple Silicon (arm64) version
+          curl -L https://github.com/descriptinc/ffmpeg-ffprobe-static/releases/download/b6.1.2-rc.1/ffprobe-darwin-arm64 -o bin/mac/ffprobe-arm64
           # Make them executable
-          chmod +x bin/mac/ffmpeg-x64 bin/mac/ffmpeg-arm64
+          chmod +x bin/mac/ffmpeg-x64 bin/mac/ffmpeg-arm64 bin/mac/ffprobe-x64 bin/mac/ffprobe-arm64
 
       - name: Build and Sign (MAS)
         run: npm run dist:mas
         env:
+          USE_HARD_LINKS: false  # <--- THIS IS THE MAGIC FIX
           # GitHub takes your secrets and turns them back into real files here
           CSC_LINK: ${{ secrets.P12_BASE64 }}
           CSC_KEY_PASSWORD: ${{ secrets.P12_PASSWORD }}
