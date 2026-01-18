@@ -20,11 +20,14 @@ jobs:
       - name: Install Dependencies
         run: |
           npm install
-          # Force download both versions of ffmpeg for the universal build
-          npm rebuild ffmpeg-static --arch=x64
-          cp node_modules/ffmpeg-static/ffmpeg node_modules/ffmpeg-static/ffmpeg-x64
-          npm rebuild ffmpeg-static --arch=arm64
-          cp node_modules/ffmpeg-static/ffmpeg node_modules/ffmpeg-static/ffmpeg-arm64
+          # Create a folder to hold our universal-ready binaries
+          mkdir -p bin/mac
+          # Download Intel (x64) version
+          curl -L https://github.com/eugeneware/ffmpeg-static/releases/download/b5.1.2/darwin-x64 -o bin/mac/ffmpeg-x64
+          # Download Apple Silicon (arm64) version
+          curl -L https://github.com/eugeneware/ffmpeg-static/releases/download/b5.1.2/darwin-arm64 -o bin/mac/ffmpeg-arm64
+          # Make them executable
+          chmod +x bin/mac/ffmpeg-x64 bin/mac/ffmpeg-arm64
 
       - name: Build and Sign (MAS)
         run: npm run dist:mas

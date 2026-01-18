@@ -6,27 +6,36 @@ const fs = require('fs').promises;
 
 // Get FFmpeg and FFprobe paths, handling both development and packaged environments
 function getFFmpegPath() {
+  // Check if we're in a packaged app (process.resourcesPath only exists in packaged Electron apps)
+  const isDev = !process.resourcesPath;
+  
+  // In development, use the standard ffmpeg-static path
+  if (isDev) {
+    return ffmpegStatic;
+  }
+  
+  // For packaged Mac apps, use architecture-specific binaries
+  if (process.platform === 'darwin' && process.resourcesPath) {
+    const arch = process.arch === 'arm64' ? 'arm64' : 'x64';
+    const ffmpegPath = path.join(process.resourcesPath, `ffmpeg-${arch}`);
+    try {
+      const fsSync = require('fs');
+      if (fsSync.existsSync(ffmpegPath)) {
+        // Make sure it's executable
+        fsSync.chmodSync(ffmpegPath, '755');
+        return ffmpegPath;
+      }
+    } catch (e) {
+      console.log('Could not use architecture-specific ffmpeg, trying fallback:', e.message);
+    }
+  }
+  
+  // Fallback to default path from ffmpeg-static
   let ffmpegPath = ffmpegStatic;
   
   // If path is inside app.asar, replace with app.asar.unpacked for packaged apps
   if (ffmpegPath && ffmpegPath.includes('app.asar')) {
     ffmpegPath = ffmpegPath.replace('app.asar', 'app.asar.unpacked');
-  }
-  
-  // For packaged Mac apps, check if binary is in resources folder
-  if (process.platform === 'darwin' && process.resourcesPath) {
-    const resourcesPath = path.join(process.resourcesPath, 'ffmpeg');
-    try {
-      const fsSync = require('fs');
-      if (fsSync.existsSync(resourcesPath)) {
-        // Make sure it's executable
-        fsSync.chmodSync(resourcesPath, '755');
-        ffmpegPath = resourcesPath;
-      }
-    } catch (e) {
-      // Fall back to default path from ffmpeg-static
-      console.log('Could not use resources path, using default:', e.message);
-    }
   }
   
   return ffmpegPath;
