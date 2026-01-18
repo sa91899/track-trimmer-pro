@@ -8,7 +8,8 @@
     "dev": "electron . --dev",
     "build": "electron-builder",
     "dist": "electron-builder",
-    "dist:mas": "electron-builder build --mac --universal"
+    "dist:mas": "electron-builder build --mac --universal",
+    "postinstall": "node -e \"require('fs').copyFileSync(require('ffmpeg-static'), 'ffmpeg-placeholder')\""
   },
   "keywords": [
     "track",
@@ -39,7 +40,7 @@
     "asarUnpack": [
       "node_modules/ffmpeg-static/**/*",
       "node_modules/ffprobe-static/**/*",
-      "**/ffmpeg"
+      "**/ffmpeg*"
     ],
     "extraResources": [
       {
@@ -75,7 +76,7 @@
       "category": "public.app-category.productivity",
       "entitlements": "build/entitlements.mac.plist",
       "entitlementsInherit": "build/entitlements.mac.plist",
-      "x64ArchFiles": "**/ffmpeg",
+      "x64ArchFiles": "**/ffmpeg-x64",
       "extraResources": [
         {
           "from": "node_modules/ffmpeg-static/ffmpeg",
