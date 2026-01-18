@@ -1,6 +1,6 @@
 {
   "name": "track-trimmer-pro",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Track Trimmer Pro - Professional batch audio trimming and conversion tool",
   "main": "main.js",
   "scripts": {
@@ -81,8 +81,8 @@
       "extendInfo": {
         "ElectronTeamID": "K86UCD782J"
       },
-      "entitlements": "build/entitlements.mas.plist",
-      "entitlementsInherit": "build/entitlements.mas.inherit.plist",
+      "entitlements": "entitlements.mas.plist",
+      "entitlementsInherit": "entitlements.mas.inherit.plist",
       "extraResources": [
         {
           "from": "bin/mac/ffmpeg-x64",
@@ -103,10 +103,10 @@
       ]
     },
     "mas": {
-      "identity": "3rd Party Mac Developer Application: Steve Adams (K86UCD782J)",
-      "entitlements": "build/entitlements.mas.plist",
-      "entitlementsInherit": "build/entitlements.mas.inherit.plist",
-      "provisioningProfile": "build/embedded.provisionprofile",
+      "identity": "Steve Adams (K86UCD782J)",
+      "entitlements": "entitlements.mas.plist",
+      "entitlementsInherit": "entitlements.mas.inherit.plist",
+      "provisioningProfile": "embedded.provisionprofile",
       "category": "public.app-category.music",
       "type": "distribution"
     }
