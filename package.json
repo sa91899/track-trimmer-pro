@@ -76,7 +76,6 @@
       "type": "distribution",
       "hardenedRuntime": true,
       "category": "public.app-category.music",
-      "teamId": "K86UCD782J",
       "entitlements": "build/entitlements.mas.plist",
       "entitlementsInherit": "build/entitlements.mas.inherit.plist",
       "extraResources": [
@@ -99,25 +98,8 @@
       ]
     },
     "mas": {
-      "type": "distribution",
-      "hardenedRuntime": false,
-      "category": "public.app-category.productivity",
       "entitlements": "build/entitlements.mas.plist",
-      "entitlementsInherit": "build/entitlements.mas.inherit.plist",
-      "extraResources": [
-        {
-          "from": "node_modules/ffmpeg-static/ffmpeg",
-          "to": "ffmpeg"
-        },
-        {
-          "from": "node_modules/ffprobe-static/bin/darwin/x64/ffprobe",
-          "to": "ffprobe"
-        },
-        {
-          "from": "node_modules/ffprobe-static/bin/darwin/arm64/ffprobe",
-          "to": "ffprobe-arm64"
-        }
-      ]
+      "entitlementsInherit": "build/entitlements.mas.inherit.plist"
     }
   }
 }

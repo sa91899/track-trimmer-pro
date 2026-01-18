@@ -34,7 +34,8 @@ jobs:
       - name: Build and Sign (MAS)
         run: npm run dist:mas
         env:
-          USE_HARD_LINKS: false  # <--- THIS IS THE MAGIC FIX
+          APPLE_TEAM_ID: K86UCD782J
+          USE_HARD_LINKS: false
           # GitHub takes your secrets and turns them back into real files here
           CSC_LINK: ${{ secrets.P12_BASE64 }}
           CSC_KEY_PASSWORD: ${{ secrets.P12_PASSWORD }}
