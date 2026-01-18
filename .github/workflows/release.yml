@@ -1,0 +1,30 @@
+name: Build and Release
+on:
+  push:
+    tags:
+      - 'v*' # This triggers the build whenever you push a tag like v1.0.0
+
+jobs:
+  release:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build and Sign (MAS)
+        run: npm run dist:mas
+        env:
+          # GitHub takes your secrets and turns them back into real files here
+          CSC_LINK: ${{ secrets.P12_BASE64 }}
+          CSC_KEY_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          PROVISIONING_PROFILE: ${{ secrets.PROVISION_PROFILE_BASE64 }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

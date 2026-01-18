@@ -4,9 +4,76 @@ const ffprobeStatic = require('ffprobe-static');
 const path = require('path');
 const fs = require('fs').promises;
 
+// Get FFmpeg and FFprobe paths, handling both development and packaged environments
+function getFFmpegPath() {
+  let ffmpegPath = ffmpegStatic;
+  
+  // If path is inside app.asar, replace with app.asar.unpacked for packaged apps
+  if (ffmpegPath && ffmpegPath.includes('app.asar')) {
+    ffmpegPath = ffmpegPath.replace('app.asar', 'app.asar.unpacked');
+  }
+  
+  // For packaged Mac apps, check if binary is in resources folder
+  if (process.platform === 'darwin' && process.resourcesPath) {
+    const resourcesPath = path.join(process.resourcesPath, 'ffmpeg');
+    try {
+      const fsSync = require('fs');
+      if (fsSync.existsSync(resourcesPath)) {
+        // Make sure it's executable
+        fsSync.chmodSync(resourcesPath, '755');
+        ffmpegPath = resourcesPath;
+      }
+    } catch (e) {
+      // Fall back to default path from ffmpeg-static
+      console.log('Could not use resources path, using default:', e.message);
+    }
+  }
+  
+  return ffmpegPath;
+}
+
+function getFFprobePath() {
+  let ffprobePath = ffprobeStatic.path;
+  
+  // If path is inside app.asar, replace with app.asar.unpacked for packaged apps
+  if (ffprobePath && ffprobePath.includes('app.asar')) {
+    ffprobePath = ffprobePath.replace('app.asar', 'app.asar.unpacked');
+  }
+  
+  // For packaged Mac apps, check if binary is in resources folder
+  if (process.platform === 'darwin' && process.resourcesPath) {
+    // Try architecture-specific binary first, then fall back to generic
+    const arch = process.arch === 'arm64' ? 'arm64' : 'x64';
+    const resourcesPath = arch === 'arm64' 
+      ? path.join(process.resourcesPath, 'ffprobe-arm64')
+      : path.join(process.resourcesPath, 'ffprobe');
+    
+    try {
+      const fsSync = require('fs');
+      if (fsSync.existsSync(resourcesPath)) {
+        // Make sure it's executable
+        fsSync.chmodSync(resourcesPath, '755');
+        ffprobePath = resourcesPath;
+      } else {
+        // Fall back to generic ffprobe
+        const genericPath = path.join(process.resourcesPath, 'ffprobe');
+        if (fsSync.existsSync(genericPath)) {
+          fsSync.chmodSync(genericPath, '755');
+          ffprobePath = genericPath;
+        }
+      }
+    } catch (e) {
+      // Fall back to default path from ffprobe-static
+      console.log('Could not use resources path, using default:', e.message);
+    }
+  }
+  
+  return ffprobePath;
+}
+
 // Set ffmpeg and ffprobe paths
-ffmpeg.setFfmpegPath(ffmpegStatic);
-ffmpeg.setFfprobePath(ffprobeStatic.path);
+ffmpeg.setFfmpegPath(getFFmpegPath());
+ffmpeg.setFfprobePath(getFFprobePath());
 
 /**
  * Process a single audio file: trim and apply fade effects
@@ -58,8 +125,8 @@ function processAudioFile(inputPath, outputPath, startTime = null, endTime = nul
     const inputExt = path.extname(inputPath).toLowerCase();
     const outputExt = path.extname(outputPath).toLowerCase();
     
-    // Verify FFmpeg path
-    const ffmpegPath = ffmpegStatic;
+    // Verify FFmpeg path (use the getter function to ensure correct path)
+    const ffmpegPath = getFFmpegPath();
     if (!ffmpegPath) {
       reject(new Error('FFmpeg binary not found. Please reinstall dependencies.'));
       return;

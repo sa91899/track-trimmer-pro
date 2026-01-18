@@ -6,7 +6,9 @@
   "scripts": {
     "start": "electron .",
     "dev": "electron . --dev",
-    "build": "electron-builder"
+    "build": "electron-builder",
+    "dist": "electron-builder",
+    "dist:mas": "electron-builder build --mac --universal"
   },
   "keywords": [
     "track",
@@ -16,7 +18,7 @@
     "trim",
     "fade"
   ],
-  "author": "",
+  "author": "Steven Adams",
   "license": "MIT",
   "devDependencies": {
     "electron": "^28.0.0",
@@ -28,32 +30,31 @@
     "fluent-ffmpeg": "^2.1.2"
   },
   "build": {
-    "appId": "StevenAdams.TrackTrimmerPro",
+    "appId": "com.stevenadams.tracktrimmerpro",
     "productName": "Track Trimmer Pro",
     "copyright": "Copyright © 2026",
     "directories": {
       "output": "dist"
     },
-    "win": {
-      "target": ["msix", "appx"],
-      "icon": "build/icon.ico",
-      "publisherName": "Steven Adams",
-      "verifyUpdateCodeSignature": false
-    },
-    "msix": {
-      "identityName": "TrackTrimmerPro.App",
-      "publisher": "CN=Steven Adams, O=Your Company, L=City, S=State, C=US",
-      "publisherDisplayName": "Steven Adams",
-      "applicationId": "TrackTrimmerPro",
-      "displayName": "Track Trimmer Pro",
-      "description": "Professional batch audio trimming and conversion tool",
-      "backgroundColor": "#000000",
-      "startMenu": {
-        "name": "Track Trimmer Pro"
+    "asarUnpack": [
+      "node_modules/ffmpeg-static/**/*",
+      "node_modules/ffprobe-static/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "node_modules/ffmpeg-static/ffmpeg.exe",
+        "to": "ffmpeg.exe",
+        "filter": ["**/*"]
       },
-      "capabilities": {
-        "rescap": ["runFullTrust"]
+      {
+        "from": "node_modules/ffprobe-static/bin/win32/x64/ffprobe.exe",
+        "to": "ffprobe.exe",
+        "filter": ["**/*"]
       }
+    ],
+    "win": {
+      "target": ["appx"],
+      "icon": "build/icon.ico"
     },
     "appx": {
       "identityName": "StevenAdams.TrackTrimmerPro",
@@ -65,38 +66,49 @@
     "mac": {
       "target": [
         {
-          "target": "dmg",
-          "arch": ["x64", "arm64"]
-        },
-        {
-          "target": "zip",
+          "target": "mas",
           "arch": ["x64", "arm64"]
         }
       ],
       "icon": "assets/icon.icns",
-      "category": "public.app-category.utilities",
-      "hardenedRuntime": true,
-      "gatekeeperAssess": false,
+      "category": "public.app-category.productivity",
       "entitlements": "build/entitlements.mac.plist",
-      "entitlementsInherit": "build/entitlements.mac.plist"
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "extraResources": [
+        {
+          "from": "node_modules/ffmpeg-static/ffmpeg",
+          "to": "ffmpeg"
+        },
+        {
+          "from": "node_modules/ffprobe-static/bin/darwin/x64/ffprobe",
+          "to": "ffprobe"
+        },
+        {
+          "from": "node_modules/ffprobe-static/bin/darwin/arm64/ffprobe",
+          "to": "ffprobe-arm64"
+        }
+      ]
     },
-    "files": [
-      "**/*",
-      "!node_modules/ffmpeg-static/bin/**/*",
-      "node_modules/ffmpeg-static/bin/win32/x64/ffmpeg.exe",
-      "node_modules/ffprobe-static/bin/**/*"
-    ],
-    "extraFiles": [
-      {
-        "from": "node_modules/ffmpeg-static/bin/win32/x64/ffmpeg.exe",
-        "to": "ffmpeg.exe",
-        "filter": ["**/*"]
-      },
-      {
-        "from": "node_modules/ffprobe-static/bin/win32/x64/ffprobe.exe",
-        "to": "ffprobe.exe",
-        "filter": ["**/*"]
-      }
-    ]
+    "mas": {
+      "type": "distribution",
+      "hardenedRuntime": false,
+      "category": "public.app-category.productivity",
+      "entitlements": "build/entitlements.mas.plist",
+      "entitlementsInherit": "build/entitlements.mas.inherit.plist",
+      "extraResources": [
+        {
+          "from": "node_modules/ffmpeg-static/ffmpeg",
+          "to": "ffmpeg"
+        },
+        {
+          "from": "node_modules/ffprobe-static/bin/darwin/x64/ffprobe",
+          "to": "ffprobe"
+        },
+        {
+          "from": "node_modules/ffprobe-static/bin/darwin/arm64/ffprobe",
+          "to": "ffprobe-arm64"
+        }
+      ]
+    }
   }
 }
