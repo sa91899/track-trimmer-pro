@@ -7,6 +7,8 @@ on:
 
 jobs:
   release:
+    permissions:
+      contents: write
     runs-on: macos-latest
     steps:
       - name: Checkout Code
@@ -43,3 +45,8 @@ jobs:
           PROVISIONING_PROFILE: ${{ secrets.PROVISION_PROFILE_BASE64 }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Track-Trimmer-Pro-Package
+          path: dist/*.pkg

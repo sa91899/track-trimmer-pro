@@ -1,6 +1,6 @@
 {
   "name": "track-trimmer-pro",
-  "version": "1.0.0",
+  "version": "1.0.14",
   "description": "Track Trimmer Pro - Professional batch audio trimming and conversion tool",
   "main": "main.js",
   "scripts": {
