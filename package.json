@@ -1,6 +1,6 @@
 {
     "name":  "track-trimmer-pro",
-    "version":  "1.0.23",
+    "version":  "1.0.24",
     "description":  "Track Trimmer Pro - Professional batch audio trimming and conversion tool",
     "main":  "main.js",
     "scripts":  {
@@ -52,8 +52,8 @@
                                  ],
                   "extraResources":  [
                                          {
-                                             "from":  "node_modules/ffmpeg-static/ffmpeg.exe",
-                                             "to":  "ffmpeg.exe",
+                                             "from":  "node_modules/ffmpeg-static/ffmpeg",
+                                             "to":  "ffmpeg",
                                              "filter":  [
                                                             "**/*"
                                                         ]
@@ -96,19 +96,15 @@
                               "entitlementsInherit":  "entitlements.mas.inherit.plist",
                               "extraResources":  [
                                                      {
-                                                         "from":  "bin/mac/ffmpeg-x64",
-                                                         "to":  "ffmpeg-x64"
+                                                         "from":  "node_modules/ffmpeg-static/ffmpeg",
+                                                         "to":  "ffmpeg"
                                                      },
                                                      {
-                                                         "from":  "bin/mac/ffmpeg-arm64",
-                                                         "to":  "ffmpeg-arm64"
-                                                     },
-                                                     {
-                                                         "from":  "bin/mac/ffprobe-x64",
+                                                         "from":  "node_modules/ffprobe-static/bin/darwin/x64/ffprobe",
                                                          "to":  "ffprobe-x64"
                                                      },
                                                      {
-                                                         "from":  "bin/mac/ffprobe-arm64",
+                                                         "from":  "node_modules/ffprobe-static/bin/darwin/arm64/ffprobe",
                                                          "to":  "ffprobe-arm64"
                                                      }
                                                  ]
@@ -120,7 +116,7 @@
                               "provisioningProfile":  "embedded.provisionprofile",
                               "category":  "public.app-category.music",
                               "type":  "distribution",
-                              "bundleVersion":  "23"
+                              "bundleVersion":  "24"
                           }
               }
 }

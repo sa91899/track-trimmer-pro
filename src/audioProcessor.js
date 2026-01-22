@@ -29,11 +29,14 @@ function getFFmpegPath() {
     candidates.push({ path: asarUnpackedPath, source: 'app.asar.unpacked/node_modules/ffmpeg-static/ffmpeg.exe' });
   }
   
-  // For macOS: Check architecture-specific binaries
+  // For macOS: Check resources folder (from extraResources in package.json)
   if (process.platform === 'darwin' && process.resourcesPath) {
-    const arch = process.arch === 'arm64' ? 'arm64' : 'x64';
-    const macPath = path.join(process.resourcesPath, `ffmpeg-${arch}`);
-    candidates.push({ path: macPath, source: `resources/ffmpeg-${arch}` });
+    const macPath = path.join(process.resourcesPath, 'ffmpeg');
+    candidates.push({ path: macPath, source: 'resources/ffmpeg' });
+    
+    // Also check app.asar.unpacked location as fallback
+    const asarUnpackedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffmpeg-static', 'ffmpeg');
+    candidates.push({ path: asarUnpackedPath, source: 'app.asar.unpacked/node_modules/ffmpeg-static/ffmpeg' });
   }
   
   // Fallback: Try the original path from ffmpeg-static with app.asar replacement
