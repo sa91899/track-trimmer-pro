@@ -1,125 +1,126 @@
 {
-  "name": "track-trimmer-pro",
-  "version": "1.0.20",
-  "description": "Track Trimmer Pro - Professional batch audio trimming and conversion tool",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron .",
-    "dev": "electron . --dev",
-    "build": "electron-builder",
-    "dist": "electron-builder",
-    "dist:mas": "electron-builder build --mac --universal",
-    "postinstall": "node -e \"require('fs').copyFileSync(require('ffmpeg-static'), 'ffmpeg-placeholder')\""
-  },
-  "keywords": [
-    "track",
-    "trimmer",
-    "audio",
-    "processor",
-    "trim",
-    "fade"
-  ],
-  "author": "Steven Adams",
-  "license": "MIT",
-  "devDependencies": {
-    "electron": "^40.0.0",
-    "electron-builder": "^24.13.3"
-  },
-  "dependencies": {
-    "ffmpeg-static": "^5.2.0",
-    "ffprobe-static": "^3.1.0",
-    "fluent-ffmpeg": "^2.1.2",
-    "sharp": "^0.34.5"
-  },
-  "build": {
-    "appId": "com.stevenadams.tracktrimmerpro",
-    "productName": "Track Trimmer Pro",
-    "copyright": "Copyright © 2026",
-    "publish": null,
-    "directories": {
-      "output": "dist"
-    },
-    "files": [
-      "**/*",
-      "!**/node_modules/ffmpeg-static/ffmpeg*",
-      "!**/node_modules/ffprobe-static/bin*"
-    ],
-    "asarUnpack": [
-      "**/node_modules/ffmpeg-static/**/*",
-      "**/node_modules/ffprobe-static/**/*",
-      "**/ffmpeg-*",
-      "**/ffprobe-*"
-    ],
-    "extraResources": [
-      {
-        "from": "node_modules/ffmpeg-static/ffmpeg.exe",
-        "to": "ffmpeg.exe",
-        "filter": [
-          "**/*"
-        ]
-      },
-      {
-        "from": "node_modules/ffprobe-static/bin/win32/x64/ffprobe.exe",
-        "to": "ffprobe.exe",
-        "filter": [
-          "**/*"
-        ]
-      }
-    ],
-    "win": {
-      "target": [
-        "appx"
-      ],
-      "icon": "build/icon.ico"
-    },
-    "appx": {
-      "identityName": "StevenAdams.TrackTrimmerPro",
-      "publisher": "CN=94BADBBF-708B-44BF-8A29-0CDD6BFF55B7",
-      "publisherDisplayName": "Steven Adams",
-      "applicationId": "TrackTrimmerPro",
-      "languages": [
-        "en-US"
-      ]
-    },
-    "mac": {
-      "target": [
-        "mas"
-      ],
-      "type": "distribution",
-      "hardenedRuntime": true,
-      "category": "public.app-category.music",
-      "identity": "Apple Distribution: Steve Adams (K86UCD782J)",
-      "extendInfo": {
-        "ElectronTeamID": "K86UCD782J"
-      },
-      "entitlements": "entitlements.mas.plist",
-      "entitlementsInherit": "entitlements.mas.inherit.plist",
-      "extraResources": [
-        {
-          "from": "bin/mac/ffmpeg-x64",
-          "to": "ffmpeg-x64"
-        },
-        {
-          "from": "bin/mac/ffmpeg-arm64",
-          "to": "ffmpeg-arm64"
-        },
-        {
-          "from": "bin/mac/ffprobe-x64",
-          "to": "ffprobe-x64"
-        },
-        {
-          "from": "bin/mac/ffprobe-arm64",
-          "to": "ffprobe-arm64"
-        }
-      ]
-    },
-    "mas": {
-      "identity": "Steve Adams (K86UCD782J)",
-      "entitlements": "entitlements.mas.plist",
-      "entitlementsInherit": "entitlements.mas.inherit.plist",
-      "provisioningProfile": "embedded.provisionprofile",
-      "category": "public.app-category.music",
-      "type": "distribution"
-    }
-  }
+    "name":  "track-trimmer-pro",
+    "version":  "1.0.21",
+    "description":  "Track Trimmer Pro - Professional batch audio trimming and conversion tool",
+    "main":  "main.js",
+    "scripts":  {
+                    "start":  "electron .",
+                    "dev":  "electron . --dev",
+                    "build":  "electron-builder",
+                    "dist":  "electron-builder",
+                    "dist:mas":  "electron-builder build --mac --universal",
+                    "postinstall":  "node -e \"require(\u0027fs\u0027).copyFileSync(require(\u0027ffmpeg-static\u0027), \u0027ffmpeg-placeholder\u0027)\""
+                },
+    "keywords":  [
+                     "track",
+                     "trimmer",
+                     "audio",
+                     "processor",
+                     "trim",
+                     "fade"
+                 ],
+    "author":  "Steven Adams",
+    "license":  "MIT",
+    "devDependencies":  {
+                            "electron":  "^40.0.0",
+                            "electron-builder":  "^24.13.3"
+                        },
+    "dependencies":  {
+                         "ffmpeg-static":  "^5.2.0",
+                         "ffprobe-static":  "^3.1.0",
+                         "fluent-ffmpeg":  "^2.1.2",
+                         "sharp":  "^0.34.5"
+                     },
+    "build":  {
+                  "appId":  "com.stevenadams.tracktrimmerpro",
+                  "productName":  "Track Trimmer Pro",
+                  "copyright":  "Copyright © 2026",
+                  "publish":  null,
+                  "directories":  {
+                                      "output":  "dist"
+                                  },
+                  "files":  [
+                                "**/*",
+                                "!**/node_modules/ffmpeg-static/ffmpeg*",
+                                "!**/node_modules/ffprobe-static/bin*"
+                            ],
+                  "asarUnpack":  [
+                                     "**/node_modules/ffmpeg-static/**/*",
+                                     "**/node_modules/ffprobe-static/**/*",
+                                     "**/ffmpeg-*",
+                                     "**/ffprobe-*"
+                                 ],
+                  "extraResources":  [
+                                         {
+                                             "from":  "node_modules/ffmpeg-static/ffmpeg.exe",
+                                             "to":  "ffmpeg.exe",
+                                             "filter":  [
+                                                            "**/*"
+                                                        ]
+                                         },
+                                         {
+                                             "from":  "node_modules/ffprobe-static/bin/win32/x64/ffprobe.exe",
+                                             "to":  "ffprobe.exe",
+                                             "filter":  [
+                                                            "**/*"
+                                                        ]
+                                         }
+                                     ],
+                  "win":  {
+                              "target":  [
+                                             "appx"
+                                         ],
+                              "icon":  "build/icon.ico"
+                          },
+                  "appx":  {
+                               "identityName":  "StevenAdams.TrackTrimmerPro",
+                               "publisher":  "CN=94BADBBF-708B-44BF-8A29-0CDD6BFF55B7",
+                               "publisherDisplayName":  "Steven Adams",
+                               "applicationId":  "TrackTrimmerPro",
+                               "languages":  [
+                                                 "en-US"
+                                             ]
+                           },
+                  "mac":  {
+                              "target":  [
+                                             "mas"
+                                         ],
+                              "type":  "distribution",
+                              "hardenedRuntime":  true,
+                              "category":  "public.app-category.music",
+                              "identity":  "Apple Distribution: Steve Adams (K86UCD782J)",
+                              "extendInfo":  {
+                                                 "ElectronTeamID":  "K86UCD782J"
+                                             },
+                              "entitlements":  "entitlements.mas.plist",
+                              "entitlementsInherit":  "entitlements.mas.inherit.plist",
+                              "extraResources":  [
+                                                     {
+                                                         "from":  "bin/mac/ffmpeg-x64",
+                                                         "to":  "ffmpeg-x64"
+                                                     },
+                                                     {
+                                                         "from":  "bin/mac/ffmpeg-arm64",
+                                                         "to":  "ffmpeg-arm64"
+                                                     },
+                                                     {
+                                                         "from":  "bin/mac/ffprobe-x64",
+                                                         "to":  "ffprobe-x64"
+                                                     },
+                                                     {
+                                                         "from":  "bin/mac/ffprobe-arm64",
+                                                         "to":  "ffprobe-arm64"
+                                                     }
+                                                 ]
+                          },
+                  "mas":  {
+                              "identity":  "Steve Adams (K86UCD782J)",
+                              "entitlements":  "entitlements.mas.plist",
+                              "entitlementsInherit":  "entitlements.mas.inherit.plist",
+                              "provisioningProfile":  "embedded.provisionprofile",
+                              "category":  "public.app-category.music",
+                              "type":  "distribution",
+                              "build":  "21"
+                          }
+              }
 }
