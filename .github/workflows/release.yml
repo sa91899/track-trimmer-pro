@@ -22,16 +22,20 @@ jobs:
       - name: Install Dependencies
         run: |
           npm install
-          # 1. Create our safe bin folder
-          mkdir -p bin/mac
-          # 2. Download our architecture-specific binaries
-          curl -L https://github.com/eugeneware/ffmpeg-static/releases/download/b5.1.2/darwin-x64 -o bin/mac/ffmpeg-x64
-          curl -L https://github.com/eugeneware/ffmpeg-static/releases/download/b5.1.2/darwin-arm64 -o bin/mac/ffmpeg-arm64
-          # 3. THE NUCLEAR FIX: Delete the default binaries that cause collisions
-          rm -rf node_modules/ffmpeg-static/ffmpeg
-          rm -rf node_modules/ffprobe-static/bin
-          # 4. Permissions
-          chmod +x bin/mac/ffmpeg-x64 bin/mac/ffmpeg-arm64
+
+      - name: Download Architecture-Specific Binaries
+        run: |
+          # Rebuild ffmpeg-static for x64 architecture
+          npm rebuild ffmpeg-static --arch=x64
+          cp node_modules/ffmpeg-static/ffmpeg node_modules/ffmpeg-static/ffmpeg-x64
+          
+          # Rebuild ffmpeg-static for arm64 architecture
+          npm rebuild ffmpeg-static --arch=arm64
+          cp node_modules/ffmpeg-static/ffmpeg node_modules/ffmpeg-static/ffmpeg-arm64
+          
+          # Make binaries executable
+          chmod +x node_modules/ffmpeg-static/ffmpeg-x64
+          chmod +x node_modules/ffmpeg-static/ffmpeg-arm64
 
       - name: Build and Sign (MAS)
         run: npm run dist:mas

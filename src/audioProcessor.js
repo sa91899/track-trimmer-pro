@@ -29,14 +29,15 @@ function getFFmpegPath() {
     candidates.push({ path: asarUnpackedPath, source: 'app.asar.unpacked/node_modules/ffmpeg-static/ffmpeg.exe' });
   }
   
-  // For macOS: Check resources folder (from extraResources in package.json)
+  // For macOS: Check architecture-specific binaries in resources folder
   if (process.platform === 'darwin' && process.resourcesPath) {
-    const macPath = path.join(process.resourcesPath, 'ffmpeg');
-    candidates.push({ path: macPath, source: 'resources/ffmpeg' });
+    const arch = process.arch === 'arm64' ? 'arm64' : 'x64';
+    const macPath = path.join(process.resourcesPath, `ffmpeg-${arch}`);
+    candidates.push({ path: macPath, source: `resources/ffmpeg-${arch}` });
     
     // Also check app.asar.unpacked location as fallback
-    const asarUnpackedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffmpeg-static', 'ffmpeg');
-    candidates.push({ path: asarUnpackedPath, source: 'app.asar.unpacked/node_modules/ffmpeg-static/ffmpeg' });
+    const asarUnpackedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffmpeg-static', `ffmpeg-${arch}`);
+    candidates.push({ path: asarUnpackedPath, source: `app.asar.unpacked/node_modules/ffmpeg-static/ffmpeg-${arch}` });
   }
   
   // Fallback: Try the original path from ffmpeg-static with app.asar replacement
@@ -47,10 +48,15 @@ function getFFmpegPath() {
     // Convert to absolute path if relative
     if (!path.isAbsolute(fallbackPath) && process.resourcesPath) {
       // Try to resolve relative to resources path (app.asar.unpacked is inside resources)
-      // For Windows, use .exe; for Mac, use binary without extension
-      const binaryName = process.platform === 'win32' ? 'ffmpeg.exe' : 'ffmpeg';
-      const resolvedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffmpeg-static', binaryName);
-      candidates.push({ path: resolvedPath, source: 'resolved fallback (relative path)' });
+      // For Windows, use .exe; for Mac, use architecture-specific binary
+      if (process.platform === 'win32') {
+        const resolvedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffmpeg-static', 'ffmpeg.exe');
+        candidates.push({ path: resolvedPath, source: 'resolved fallback (relative path)' });
+      } else if (process.platform === 'darwin') {
+        const arch = process.arch === 'arm64' ? 'arm64' : 'x64';
+        const resolvedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffmpeg-static', `ffmpeg-${arch}`);
+        candidates.push({ path: resolvedPath, source: 'resolved fallback (relative path)' });
+      }
     } else {
       candidates.push({ path: fallbackPath, source: 'ffmpeg-static with app.asar replacement' });
     }

@@ -90,8 +90,12 @@
                               "entitlementsInherit":  "entitlements.mas.inherit.plist",
                               "extraResources":  [
                                                      {
-                                                         "from":  "node_modules/ffmpeg-static/ffmpeg",
-                                                         "to":  "ffmpeg"
+                                                         "from":  "node_modules/ffmpeg-static/ffmpeg-x64",
+                                                         "to":  "ffmpeg-x64"
+                                                     },
+                                                     {
+                                                         "from":  "node_modules/ffmpeg-static/ffmpeg-arm64",
+                                                         "to":  "ffmpeg-arm64"
                                                      },
                                                      {
                                                          "from":  "node_modules/ffprobe-static/bin/darwin/${arch}/ffprobe",
