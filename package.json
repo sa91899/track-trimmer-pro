@@ -1,6 +1,6 @@
 {
     "name":  "track-trimmer-pro",
-    "version":  "1.0.27",
+    "version":  "1.0.28",
     "description":  "Track Trimmer Pro - Professional batch audio trimming and conversion tool",
     "main":  "main.js",
     "scripts":  {
@@ -88,9 +88,8 @@
                                              },
                               "entitlements":  "entitlements.mas.plist",
                               "entitlementsInherit":  "entitlements.mas.inherit.plist",
-                              "universalOptions":  {
-                                                         "x64ArchFiles":  "**/Resources/ff*"
-                                                     },
+                              "x64ArchFiles":  "**/Resources/ff*",
+                              "mergeASARs":  true,
                               "extraResources":  [
                                                      {
                                                          "from":  "node_modules/ffmpeg-static/ffmpeg",
@@ -109,7 +108,7 @@
                               "provisioningProfile":  "embedded.provisionprofile",
                               "category":  "public.app-category.music",
                               "type":  "distribution",
-                              "bundleVersion":  "27"
+                              "bundleVersion":  "28"
                           }
               }
 }
