@@ -19,22 +19,26 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install Dependencies
+      - name: Install Dependencies and Prepare Binaries
         run: |
           npm install
-
-      - name: Download Architecture-Specific Binaries
-        run: |
-          # Rebuild ffmpeg-static for x64 architecture
-          npm rebuild ffmpeg-static --arch=x64
           
-          # Rebuild ffmpeg-static for arm64 architecture
-          npm rebuild ffmpeg-static --arch=arm64
+          # Create separate binary folders for each architecture
+          mkdir -p binaries/x64 binaries/arm64
+          
+          # Rebuild for x64 architecture and copy binaries
+          npm rebuild ffmpeg-static ffprobe-static --arch=x64
+          cp node_modules/ffmpeg-static/ffmpeg binaries/x64/ffmpeg
+          cp node_modules/ffprobe-static/bin/darwin/x64/ffprobe binaries/x64/ffprobe
+          
+          # Rebuild for arm64 architecture and copy binaries
+          npm rebuild ffmpeg-static ffprobe-static --arch=arm64
+          cp node_modules/ffmpeg-static/ffmpeg binaries/arm64/ffmpeg
+          cp node_modules/ffprobe-static/bin/darwin/arm64/ffprobe binaries/arm64/ffprobe
           
           # Make binaries executable
-          chmod +x node_modules/ffmpeg-static/ffmpeg
-          chmod +x node_modules/ffprobe-static/bin/darwin/x64/ffprobe
-          chmod +x node_modules/ffprobe-static/bin/darwin/arm64/ffprobe
+          chmod +x binaries/x64/ffmpeg binaries/x64/ffprobe
+          chmod +x binaries/arm64/ffmpeg binaries/arm64/ffprobe
 
       - name: Build and Sign (MAS)
         run: npm run dist:mas
