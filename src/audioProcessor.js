@@ -47,7 +47,9 @@ function getFFmpegPath() {
     // Convert to absolute path if relative
     if (!path.isAbsolute(fallbackPath) && process.resourcesPath) {
       // Try to resolve relative to resources path (app.asar.unpacked is inside resources)
-      const resolvedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffmpeg-static', 'ffmpeg.exe');
+      // For Windows, use .exe; for Mac, use binary without extension
+      const binaryName = process.platform === 'win32' ? 'ffmpeg.exe' : 'ffmpeg';
+      const resolvedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffmpeg-static', binaryName);
       candidates.push({ path: resolvedPath, source: 'resolved fallback (relative path)' });
     } else {
       candidates.push({ path: fallbackPath, source: 'ffmpeg-static with app.asar replacement' });
@@ -120,8 +122,15 @@ function getFFprobePath() {
     // Convert to absolute path if relative
     if (!path.isAbsolute(fallbackPath) && process.resourcesPath) {
       // Try to resolve relative to resources path (app.asar.unpacked is inside resources)
-      const resolvedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffprobe-static', 'bin', 'win32', 'x64', 'ffprobe.exe');
-      candidates.push({ path: resolvedPath, source: 'resolved fallback (relative path)' });
+      // Platform-specific path resolution
+      if (process.platform === 'win32') {
+        const resolvedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffprobe-static', 'bin', 'win32', 'x64', 'ffprobe.exe');
+        candidates.push({ path: resolvedPath, source: 'resolved fallback (relative path)' });
+      } else if (process.platform === 'darwin') {
+        const arch = process.arch === 'arm64' ? 'arm64' : 'x64';
+        const resolvedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffprobe-static', 'bin', 'darwin', arch, 'ffprobe');
+        candidates.push({ path: resolvedPath, source: 'resolved fallback (relative path)' });
+      }
     } else {
       candidates.push({ path: fallbackPath, source: 'ffprobe-static.path with app.asar replacement' });
     }
