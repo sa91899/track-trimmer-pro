@@ -10,7 +10,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   openOutputFolder: (folderPath) => ipcRenderer.invoke('open-output-folder', folderPath),
   onBatchProgress: (callback) => {
     ipcRenderer.on('batch-progress', (event, progress) => callback(progress));
-  }
+  },
+  // Get the correct path to the icon for both dev and production
+  getIconPath: () => ipcRenderer.invoke('get-icon-path')
 });
 
 

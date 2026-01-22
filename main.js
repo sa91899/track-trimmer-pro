@@ -239,4 +239,21 @@ ipcMain.handle('open-output-folder', async (event, folderPath) => {
   }
 });
 
+ipcMain.handle('get-icon-path', async () => {
+  // In development, return relative path
+  if (!process.resourcesPath) {
+    return 'build/icon-master.png';
+  }
+  // In production, the icon is in app.asar/build/icon-master.png
+  // When using loadFile(), relative paths work relative to the HTML file location
+  // Since index.html is at the root of app.asar, build/icon-master.png should work
+  // But we'll return the file:// URL to be safe
+  const iconPath = path.join(__dirname, 'build', 'icon-master.png');
+  // Convert to file:// URL format (Windows needs extra slash)
+  if (process.platform === 'win32') {
+    return `file:///${iconPath.replace(/\\/g, '/')}`;
+  }
+  return `file://${iconPath}`;
+});
+
 

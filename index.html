@@ -531,6 +531,18 @@
             margin-top: 40px;
         }
 
+        .process-instruction {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 16px;
+            display: block;
+            transition: opacity 0.3s;
+        }
+
+        .process-instruction.hidden {
+            display: none;
+        }
+
         .btn-process {
             padding: 16px 48px;
             font-size: 1.0625rem;
@@ -864,7 +876,7 @@
             <div class="header">
                 <a href="#" class="header-about-btn" id="headerAboutBtn" title="About">?</a>
                 <h1>
-                    <img src="build/icon-master.png" alt="Track Trimmer Pro" style="width: 40px; height: 40px; display: inline-block; vertical-align: middle; margin-right: 12px;">
+                    <img id="headerLogo" src="build/icon-master.png" alt="Track Trimmer Pro" style="width: 40px; height: 40px; display: inline-block; vertical-align: middle; margin-right: 12px;" onerror="this.style.display='none';">
                     Track Trimmer Pro
                 </h1>
                 <div class="subtitle">Professional batch audio trimming and conversion tool</div>
@@ -917,7 +929,7 @@
             </div>
             <div class="file-preview" id="inputFilePreview">
                 <div class="file-preview-title">
-                    <img src="build/icon-master.png" alt="Track Trimmer Pro" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;">
+                    <img id="filePreviewLogo" src="build/icon-master.png" alt="Track Trimmer Pro" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;" onerror="this.style.display='none';">
                     <span>Audio files found:</span>
                     <span class="file-count" id="fileCount">0 files</span>
                 </div>
@@ -1034,6 +1046,7 @@
         </div>
 
         <div class="process-section">
+            <span class="process-instruction" id="processInstruction">Step 1: Browse for a file to begin.</span>
             <button class="btn-process" id="processBtn" disabled>
                 <i data-feather="play"></i>
                 Process Audio Files
@@ -1053,10 +1066,10 @@
     <!-- About Modal -->
     <div id="aboutModal">
         <div class="modal-content">
-            <img src="build/icon-master.png" alt="Track Trimmer Pro" class="modal-logo about-logo">
+            <img id="aboutModalLogo" src="build/icon-master.png" alt="Track Trimmer Pro" class="modal-logo about-logo" onerror="this.style.display='none';">
             <div class="modal-app-name">Track Trimmer Pro</div>
             <div class="modal-info">Developed by: Steven Adams</div>
-            <div class="modal-info">Version: 1.0.0</div>
+            <div class="modal-info">Version: 1.0.20</div>
             <button class="modal-close-btn" id="closeAboutBtn">
                 Close
             </button>
@@ -1066,7 +1079,24 @@
     <script src="renderer.js"></script>
     <script>
         // Wait for DOM and Feather icons to be ready
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Load icon paths for packaged apps
+            if (window.electronAPI && window.electronAPI.getIconPath) {
+                try {
+                    const iconPath = await window.electronAPI.getIconPath();
+                    // Update all logo images
+                    const headerLogo = document.getElementById('headerLogo');
+                    const filePreviewLogo = document.getElementById('filePreviewLogo');
+                    const aboutModalLogo = document.getElementById('aboutModalLogo');
+                    
+                    if (headerLogo) headerLogo.src = iconPath;
+                    if (filePreviewLogo) filePreviewLogo.src = iconPath;
+                    if (aboutModalLogo) aboutModalLogo.src = iconPath;
+                } catch (error) {
+                    console.error('Failed to load icon path:', error);
+                }
+            }
+            
             // Initialize Feather icons
             if (typeof feather !== 'undefined') {
                 feather.replace();

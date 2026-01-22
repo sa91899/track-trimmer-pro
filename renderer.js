@@ -301,14 +301,38 @@ processBtn.addEventListener('click', async () => {
 
 // Helper Functions
 function updateProcessButton() {
+  const processInstruction = document.getElementById('processInstruction');
+  
   if (currentMode === 'single') {
     const hasInput = inputFileInput.value.trim() !== '';
     const hasOutput = outputFileInput.value.trim() !== '';
-    processBtn.disabled = !hasInput || !hasOutput || isProcessing;
+    const isEnabled = hasInput && hasOutput && !isProcessing;
+    processBtn.disabled = !isEnabled;
+    
+    // Show/hide instruction text
+    if (processInstruction) {
+      if (isEnabled) {
+        processInstruction.classList.add('hidden');
+      } else {
+        processInstruction.classList.remove('hidden');
+        processInstruction.textContent = 'Step 1: Browse for a file to begin.';
+      }
+    }
   } else {
     const hasInput = inputFolderInput.value.trim() !== '';
     const hasOutput = outputFolderInput.value.trim() !== '';
-    processBtn.disabled = !hasInput || !hasOutput || isProcessing;
+    const isEnabled = hasInput && hasOutput && !isProcessing;
+    processBtn.disabled = !isEnabled;
+    
+    // Show/hide instruction text
+    if (processInstruction) {
+      if (isEnabled) {
+        processInstruction.classList.add('hidden');
+      } else {
+        processInstruction.classList.remove('hidden');
+        processInstruction.textContent = 'Step 1: Browse for a folder to begin.';
+      }
+    }
   }
 }
 
