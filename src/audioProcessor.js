@@ -6,75 +6,149 @@ const fs = require('fs').promises;
 
 // Get FFmpeg and FFprobe paths, handling both development and packaged environments
 function getFFmpegPath() {
-  // Check if we're in a packaged app (process.resourcesPath only exists in packaged Electron apps)
+  const fsSync = require('fs');
   const isDev = !process.resourcesPath;
   
-  // In development, use the standard ffmpeg-static path
+  // In development, use the path from ffmpeg-static directly
   if (isDev) {
-    return ffmpegStatic;
+    const devPath = ffmpegStatic;
+    console.log('[FFmpeg] Development path:', devPath);
+    return devPath;
   }
   
-  // For packaged Mac apps, use architecture-specific binaries
+  // For packaged apps, try multiple locations in order of preference
+  const candidates = [];
+  
+  // For Windows: Check resources folder (from extraResources in package.json)
+  if (process.platform === 'win32' && process.resourcesPath) {
+    const resourcesPath = path.join(process.resourcesPath, 'ffmpeg.exe');
+    candidates.push({ path: resourcesPath, source: 'resources/ffmpeg.exe' });
+    
+    // Also check app.asar.unpacked location
+    const asarUnpackedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffmpeg-static', 'ffmpeg.exe');
+    candidates.push({ path: asarUnpackedPath, source: 'app.asar.unpacked/node_modules/ffmpeg-static/ffmpeg.exe' });
+  }
+  
+  // For macOS: Check architecture-specific binaries
   if (process.platform === 'darwin' && process.resourcesPath) {
     const arch = process.arch === 'arm64' ? 'arm64' : 'x64';
-    const ffmpegPath = path.join(process.resourcesPath, `ffmpeg-${arch}`);
-    try {
-      const fsSync = require('fs');
-      if (fsSync.existsSync(ffmpegPath)) {
-        // Make sure it's executable
-        fsSync.chmodSync(ffmpegPath, '755');
-        return ffmpegPath;
-      }
-    } catch (e) {
-      console.log('Could not use architecture-specific ffmpeg, trying fallback:', e.message);
+    const macPath = path.join(process.resourcesPath, `ffmpeg-${arch}`);
+    candidates.push({ path: macPath, source: `resources/ffmpeg-${arch}` });
+  }
+  
+  // Fallback: Try the original path from ffmpeg-static with app.asar replacement
+  let fallbackPath = ffmpegStatic;
+  if (fallbackPath) {
+    // Normalize path separators and handle app.asar
+    fallbackPath = fallbackPath.replace(/app\.asar([\\/])/g, 'app.asar.unpacked$1');
+    // Convert to absolute path if relative
+    if (!path.isAbsolute(fallbackPath) && process.resourcesPath) {
+      // Try to resolve relative to resources path (app.asar.unpacked is inside resources)
+      const resolvedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffmpeg-static', 'ffmpeg.exe');
+      candidates.push({ path: resolvedPath, source: 'resolved fallback (relative path)' });
+    } else {
+      candidates.push({ path: fallbackPath, source: 'ffmpeg-static with app.asar replacement' });
     }
   }
   
-  // Fallback to default path from ffmpeg-static
-  let ffmpegPath = ffmpegStatic;
-  
-  // If path is inside app.asar, replace with app.asar.unpacked for packaged apps
-  if (ffmpegPath && ffmpegPath.includes('app.asar')) {
-    ffmpegPath = ffmpegPath.replace('app.asar', 'app.asar.unpacked');
+  // Try each candidate path
+  for (const candidate of candidates) {
+    try {
+      if (fsSync.existsSync(candidate.path)) {
+        console.log(`[FFmpeg] Found at: ${candidate.path} (source: ${candidate.source})`);
+        // Make executable on Unix-like systems
+        if (process.platform !== 'win32') {
+          try {
+            fsSync.chmodSync(candidate.path, '755');
+          } catch (e) {
+            console.warn('[FFmpeg] Could not set executable permissions:', e.message);
+          }
+        }
+        return candidate.path;
+      }
+    } catch (e) {
+      console.warn(`[FFmpeg] Error checking path ${candidate.path}:`, e.message);
+    }
   }
   
-  return ffmpegPath;
+  // If none found, log all attempted paths and return the first fallback
+  console.error('[FFmpeg] ERROR: Could not find ffmpeg binary. Attempted paths:');
+  candidates.forEach(c => console.error(`  - ${c.path} (${c.source})`));
+  console.error('[FFmpeg] Using fallback path (may not exist):', fallbackPath || ffmpegStatic);
+  return fallbackPath || ffmpegStatic;
 }
 
 function getFFprobePath() {
-  // Check if we're in a packaged app (process.resourcesPath only exists in packaged Electron apps)
+  const fsSync = require('fs');
   const isDev = !process.resourcesPath;
   
-  // In development, use the standard ffprobe-static path
+  // In development, use the path from ffprobe-static directly
   if (isDev) {
-    return ffprobeStatic.path;
+    const devPath = ffprobeStatic.path;
+    console.log('[FFprobe] Development path:', devPath);
+    return devPath;
   }
   
-  // For packaged Mac apps, use architecture-specific binaries
+  // For packaged apps, try multiple locations in order of preference
+  const candidates = [];
+  
+  // For Windows: Check resources folder (from extraResources in package.json)
+  if (process.platform === 'win32' && process.resourcesPath) {
+    const resourcesPath = path.join(process.resourcesPath, 'ffprobe.exe');
+    candidates.push({ path: resourcesPath, source: 'resources/ffprobe.exe' });
+    
+    // Also check app.asar.unpacked location
+    const asarUnpackedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffprobe-static', 'bin', 'win32', 'x64', 'ffprobe.exe');
+    candidates.push({ path: asarUnpackedPath, source: 'app.asar.unpacked/node_modules/ffprobe-static/bin/win32/x64/ffprobe.exe' });
+  }
+  
+  // For macOS: Check architecture-specific binaries
   if (process.platform === 'darwin' && process.resourcesPath) {
     const arch = process.arch === 'arm64' ? 'arm64' : 'x64';
-    const ffprobePath = path.join(process.resourcesPath, `ffprobe-${arch}`);
-    try {
-      const fsSync = require('fs');
-      if (fsSync.existsSync(ffprobePath)) {
-        // Make sure it's executable
-        fsSync.chmodSync(ffprobePath, '755');
-        return ffprobePath;
-      }
-    } catch (e) {
-      console.log('Could not use architecture-specific ffprobe, trying fallback:', e.message);
+    const macPath = path.join(process.resourcesPath, `ffprobe-${arch}`);
+    candidates.push({ path: macPath, source: `resources/ffprobe-${arch}` });
+  }
+  
+  // Fallback: Try the original path from ffprobe-static with app.asar replacement
+  let fallbackPath = ffprobeStatic.path;
+  if (fallbackPath) {
+    // Normalize path separators and handle app.asar
+    fallbackPath = fallbackPath.replace(/app\.asar([\\/])/g, 'app.asar.unpacked$1');
+    // Convert to absolute path if relative
+    if (!path.isAbsolute(fallbackPath) && process.resourcesPath) {
+      // Try to resolve relative to resources path (app.asar.unpacked is inside resources)
+      const resolvedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffprobe-static', 'bin', 'win32', 'x64', 'ffprobe.exe');
+      candidates.push({ path: resolvedPath, source: 'resolved fallback (relative path)' });
+    } else {
+      candidates.push({ path: fallbackPath, source: 'ffprobe-static.path with app.asar replacement' });
     }
   }
   
-  // Fallback to default path from ffprobe-static
-  let ffprobePath = ffprobeStatic.path;
-  
-  // If path is inside app.asar, replace with app.asar.unpacked for packaged apps
-  if (ffprobePath && ffprobePath.includes('app.asar')) {
-    ffprobePath = ffprobePath.replace('app.asar', 'app.asar.unpacked');
+  // Try each candidate path
+  for (const candidate of candidates) {
+    try {
+      if (fsSync.existsSync(candidate.path)) {
+        console.log(`[FFprobe] Found at: ${candidate.path} (source: ${candidate.source})`);
+        // Make executable on Unix-like systems
+        if (process.platform !== 'win32') {
+          try {
+            fsSync.chmodSync(candidate.path, '755');
+          } catch (e) {
+            console.warn('[FFprobe] Could not set executable permissions:', e.message);
+          }
+        }
+        return candidate.path;
+      }
+    } catch (e) {
+      console.warn(`[FFprobe] Error checking path ${candidate.path}:`, e.message);
+    }
   }
   
-  return ffprobePath;
+  // If none found, log all attempted paths and return the first fallback
+  console.error('[FFprobe] ERROR: Could not find ffprobe binary. Attempted paths:');
+  candidates.forEach(c => console.error(`  - ${c.path} (${c.source})`));
+  console.error('[FFprobe] Using fallback path (may not exist):', fallbackPath || ffprobeStatic.path);
+  return fallbackPath || ffprobeStatic.path;
 }
 
 // Set ffmpeg and ffprobe paths
@@ -132,13 +206,30 @@ function processAudioFile(inputPath, outputPath, startTime = null, endTime = nul
     const outputExt = path.extname(outputPath).toLowerCase();
     
     // Verify FFmpeg path (use the getter function to ensure correct path)
+    // Re-resolve paths dynamically in case they weren't set correctly at module load
     const ffmpegPath = getFFmpegPath();
+    const ffprobePath = getFFprobePath();
+    
+    // Update fluent-ffmpeg paths to ensure they're current
+    ffmpeg.setFfmpegPath(ffmpegPath);
+    ffmpeg.setFfprobePath(ffprobePath);
+    
     if (!ffmpegPath) {
-      reject(new Error('FFmpeg binary not found. Please reinstall dependencies.'));
+      const errorMsg = 'FFmpeg binary not found. Please reinstall dependencies.';
+      console.error('[FFmpeg] ERROR:', errorMsg);
+      reject(new Error(errorMsg));
       return;
     }
     
-    console.log('FFmpeg path:', ffmpegPath);
+    if (!ffprobePath) {
+      const errorMsg = 'FFprobe binary not found. Please reinstall dependencies.';
+      console.error('[FFprobe] ERROR:', errorMsg);
+      reject(new Error(errorMsg));
+      return;
+    }
+    
+    console.log('[FFmpeg] Using path:', ffmpegPath);
+    console.log('[FFprobe] Using path:', ffprobePath);
     console.log('Processing:', inputPath, '->', outputPath);
 
     // Ensure output directory exists
@@ -149,6 +240,10 @@ function processAudioFile(inputPath, outputPath, startTime = null, endTime = nul
         const maxProbeAttempts = 2;
         
         const attemptProbe = () => {
+          // Get the current ffprobe path for error reporting
+          const currentFFprobePath = getFFprobePath();
+          console.log('[FFprobe] Attempting to probe with path:', currentFFprobePath);
+          
           ffmpeg(inputPath)
             .ffprobe((err, metadata) => {
               if (err) {
@@ -158,7 +253,12 @@ function processAudioFile(inputPath, outputPath, startTime = null, endTime = nul
                   setTimeout(attemptProbe, 500);
                   return;
                 }
-                reject(new Error(`Failed to read audio file (corrupted or unsupported format): ${err.message}`));
+                // Enhanced error message with path information
+                const errorDetails = `Failed to read audio file (corrupted or unsupported format): ${err.message}`;
+                const pathDetails = `FFprobe path attempted: ${currentFFprobePath}`;
+                console.error('[FFprobe] ERROR:', errorDetails);
+                console.error('[FFprobe] PATH:', pathDetails);
+                reject(new Error(`${errorDetails}\n${pathDetails}`));
                 return;
               }
 
@@ -304,7 +404,8 @@ function processAudioFile(inputPath, outputPath, startTime = null, endTime = nul
                 });
               })
               .on('error', (err) => {
-                console.error('FFmpeg error:', err);
+                console.error('[FFmpeg] Processing error:', err);
+                console.error('[FFmpeg] Path used:', ffmpegPath);
                 let errorMessage = `Audio processing failed: ${err.message}`;
                 
                 // Provide more helpful error messages
@@ -312,13 +413,15 @@ function processAudioFile(inputPath, outputPath, startTime = null, endTime = nul
                   errorMessage = 'File appears to be corrupted or in an unsupported format';
                 } else if (err.message.includes('Permission denied')) {
                   errorMessage = 'Permission denied - check file access rights';
-                } else if (err.message.includes('No such file')) {
-                  errorMessage = 'Input file not found';
+                } else if (err.message.includes('No such file') || err.message.includes('ENOENT')) {
+                  errorMessage = `FFmpeg binary not found at: ${ffmpegPath}`;
                 } else if (err.message.includes('codec')) {
                   errorMessage = 'Codec error - file format may not be fully supported';
                 }
                 
-                reject(new Error(errorMessage));
+                // Add path information to error for debugging
+                const fullErrorMessage = `${errorMessage}\nFFmpeg path attempted: ${ffmpegPath}`;
+                reject(new Error(fullErrorMessage));
               })
               .save(finalOutputPath);
             });
