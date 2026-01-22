@@ -29,15 +29,15 @@ function getFFmpegPath() {
     candidates.push({ path: asarUnpackedPath, source: 'app.asar.unpacked/node_modules/ffmpeg-static/ffmpeg.exe' });
   }
   
-  // For macOS: Check architecture-specific binaries in resources folder
+  // For macOS: Check resources folder (from extraResources in package.json)
+  // Universal build merges both architectures, so we just look for "ffmpeg"
   if (process.platform === 'darwin' && process.resourcesPath) {
-    const arch = process.arch === 'arm64' ? 'arm64' : 'x64';
-    const macPath = path.join(process.resourcesPath, `ffmpeg-${arch}`);
-    candidates.push({ path: macPath, source: `resources/ffmpeg-${arch}` });
+    const macPath = path.join(process.resourcesPath, 'ffmpeg');
+    candidates.push({ path: macPath, source: 'resources/ffmpeg' });
     
     // Also check app.asar.unpacked location as fallback
-    const asarUnpackedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffmpeg-static', `ffmpeg-${arch}`);
-    candidates.push({ path: asarUnpackedPath, source: `app.asar.unpacked/node_modules/ffmpeg-static/ffmpeg-${arch}` });
+    const asarUnpackedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffmpeg-static', 'ffmpeg');
+    candidates.push({ path: asarUnpackedPath, source: 'app.asar.unpacked/node_modules/ffmpeg-static/ffmpeg' });
   }
   
   // Fallback: Try the original path from ffmpeg-static with app.asar replacement
@@ -48,13 +48,12 @@ function getFFmpegPath() {
     // Convert to absolute path if relative
     if (!path.isAbsolute(fallbackPath) && process.resourcesPath) {
       // Try to resolve relative to resources path (app.asar.unpacked is inside resources)
-      // For Windows, use .exe; for Mac, use architecture-specific binary
+      // For Windows, use .exe; for Mac, use binary without extension (universal build merges architectures)
       if (process.platform === 'win32') {
         const resolvedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffmpeg-static', 'ffmpeg.exe');
         candidates.push({ path: resolvedPath, source: 'resolved fallback (relative path)' });
       } else if (process.platform === 'darwin') {
-        const arch = process.arch === 'arm64' ? 'arm64' : 'x64';
-        const resolvedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffmpeg-static', `ffmpeg-${arch}`);
+        const resolvedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffmpeg-static', 'ffmpeg');
         candidates.push({ path: resolvedPath, source: 'resolved fallback (relative path)' });
       }
     } else {
@@ -113,11 +112,11 @@ function getFFprobePath() {
     candidates.push({ path: asarUnpackedPath, source: 'app.asar.unpacked/node_modules/ffprobe-static/bin/win32/x64/ffprobe.exe' });
   }
   
-  // For macOS: Check architecture-specific binaries
+  // For macOS: Check resources folder (from extraResources in package.json)
+  // Universal build merges both architectures, so we just look for "ffprobe"
   if (process.platform === 'darwin' && process.resourcesPath) {
-    const arch = process.arch === 'arm64' ? 'arm64' : 'x64';
-    const macPath = path.join(process.resourcesPath, `ffprobe-${arch}`);
-    candidates.push({ path: macPath, source: `resources/ffprobe-${arch}` });
+    const macPath = path.join(process.resourcesPath, 'ffprobe');
+    candidates.push({ path: macPath, source: 'resources/ffprobe' });
   }
   
   // Fallback: Try the original path from ffprobe-static with app.asar replacement
@@ -133,8 +132,8 @@ function getFFprobePath() {
         const resolvedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffprobe-static', 'bin', 'win32', 'x64', 'ffprobe.exe');
         candidates.push({ path: resolvedPath, source: 'resolved fallback (relative path)' });
       } else if (process.platform === 'darwin') {
-        const arch = process.arch === 'arm64' ? 'arm64' : 'x64';
-        const resolvedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffprobe-static', 'bin', 'darwin', arch, 'ffprobe');
+        // Universal build merges architectures, so we just look for "ffprobe"
+        const resolvedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'node_modules', 'ffprobe-static', 'bin', 'darwin', process.arch === 'arm64' ? 'arm64' : 'x64', 'ffprobe');
         candidates.push({ path: resolvedPath, source: 'resolved fallback (relative path)' });
       }
     } else {
