@@ -19,26 +19,25 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install Dependencies and Prepare Binaries
+      - name: Install Dependencies
         run: |
           npm install
-          
-          # Create separate binary folders for each architecture
+
+      - name: Download Binaries
+        run: |
+          # Create folders
           mkdir -p binaries/x64 binaries/arm64
           
-          # Rebuild for x64 architecture and copy binaries
-          npm rebuild ffmpeg-static ffprobe-static --arch=x64
-          cp node_modules/ffmpeg-static/ffmpeg binaries/x64/ffmpeg
-          cp node_modules/ffprobe-static/bin/darwin/x64/ffprobe binaries/x64/ffprobe
+          # Download Intel (x64) binaries
+          curl -L https://github.com/eugeneware/ffmpeg-static/releases/download/b6.1.1/darwin-x64 -o binaries/x64/ffmpeg
+          curl -L https://github.com/eugeneware/ffprobe-static/releases/download/b6.1.1/darwin-x64 -o binaries/x64/ffprobe
           
-          # Rebuild for arm64 architecture and copy binaries
-          npm rebuild ffmpeg-static ffprobe-static --arch=arm64
-          cp node_modules/ffmpeg-static/ffmpeg binaries/arm64/ffmpeg
-          cp node_modules/ffprobe-static/bin/darwin/arm64/ffprobe binaries/arm64/ffprobe
+          # Download Apple Silicon (arm64) binaries
+          curl -L https://github.com/eugeneware/ffmpeg-static/releases/download/b6.1.1/darwin-arm64 -o binaries/arm64/ffmpeg
+          curl -L https://github.com/eugeneware/ffprobe-static/releases/download/b6.1.1/darwin-arm64 -o binaries/arm64/ffprobe
           
-          # Make binaries executable
-          chmod +x binaries/x64/ffmpeg binaries/x64/ffprobe
-          chmod +x binaries/arm64/ffmpeg binaries/arm64/ffprobe
+          # Make them executable
+          chmod +x binaries/x64/ffmpeg binaries/x64/ffprobe binaries/arm64/ffmpeg binaries/arm64/ffprobe
 
       - name: Build and Sign (MAS)
         run: npm run dist:mas
